@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard – HeartCare AI{% endblock %}
+{% block content %}
+<div class="container-fluid" style="padding-top:80px;">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-2 admin-sidebar d-none d-md-block">
+      <h6 class="text-muted small text-uppercase mb-3 ps-2">Admin Panel</h6>
+      <ul class="nav flex-column gap-1">
+        <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link active"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+        <li><a href="{{ url_for('admin.doctors') }}" class="nav-link"><i class="bi bi-person-badge"></i>Doctors</a></li>
+        <li><a href="{{ url_for('admin.patients') }}" class="nav-link"><i class="bi bi-people"></i>Patients</a></li>
+        <li><a href="{{ url_for('admin.users') }}" class="nav-link"><i class="bi bi-person-lock"></i>Users</a></li>
+        <li><a href="{{ url_for('admin.all_predictions') }}" class="nav-link"><i class="bi bi-clipboard2-pulse"></i>Predictions</a></li>
+        <li><a href="{{ url_for('admin.create_doctor') }}" class="nav-link"><i class="bi bi-person-plus"></i>New Doctor</a></li>
+        <hr class="border-secondary my-2"/>
+        <li><a href="{{ url_for('main.index') }}" class="nav-link"><i class="bi bi-house"></i>Main Site</a></li>
+      </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="col-md-10 p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Admin Dashboard</h2>
+          <p class="text-muted mb-0">HeartCare AI control panel</p>
+        </div>
+        <a href="{{ url_for('admin.create_doctor') }}" class="btn btn-primary">
+          <i class="bi bi-person-plus me-2"></i>Create Doctor Account
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="row g-4 mb-5">
+        {% for icon, label, val, color in [
+          ('bi-people-fill', 'Total Patients', total_patients, 'primary'),
+          ('bi-person-badge-fill', 'Active Doctors', total_doctors, 'success'),
+          ('bi-person-fill', 'All Users', total_users, 'info'),
+          ('bi-clipboard2-pulse-fill', 'Predictions Made', total_preds, 'warning'),
+        ] %}
+        <div class="col-6 col-lg-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(var(--bs-{{color}}-rgb), 0.15);">
+              <i class="bi {{ icon }} text-{{ color }}"></i>
+            </div>
+            <span class="stat-value" data-counter="{{ val }}">{{ val }}</span>
+            <span class="stat-label">{{ label }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Recent Predictions -->
+      <div class="hc-card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-clock-history me-2 text-primary"></i>Recent Predictions</span>
+          <a href="{{ url_for('admin.all_predictions') }}" class="btn btn-sm btn-outline-light">View All</a>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table hc-table mb-0">
+              <thead><tr>
+                <th>ID</th><th>Patient</th><th>Prediction</th><th>Risk</th><th>Confidence</th><th>Date</th>
+              </tr></thead>
+              <tbody>
+                {% for p in recent_preds %}
+                <tr>
+                  <td><code class="text-primary small">RPT-{{ '%05d'|format(p.id) }}</code></td>
+                  <td class="fw-semibold">{{ p.patient_name }}</td>
+                  <td>
+                    <span class="badge {% if p.final_prediction == 1 %}bg-danger{% else %}bg-success{% endif %}">
+                      {% if p.final_prediction == 1 %}Disease{% else %}Normal{% endif %}
+                    </span>
+                  </td>
+                  <td class="{% if p.final_prediction == 1 %}text-danger{% else %}text-success{% endif %} fw-semibold small">
+                    {{ p.risk_level }}
+                  </td>
+                  <td>{{ "%.1f"|format(p.confidence) }}%</td>
+                  <td class="text-muted small">{{ p.created_at.strftime('%m/%d %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No predictions yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="row g-3">
+        {% for href, icon, color, title, desc in [
+          (url_for('admin.doctors'), 'bi-person-badge', 'primary', 'Manage Doctors', 'View & edit doctor profiles'),
+          (url_for('admin.patients'), 'bi-people', 'success', 'Manage Patients', 'Assign doctors to patients'),
+          (url_for('admin.users'), 'bi-person-lock', 'info', 'Manage Users', 'Reset passwords, view accounts'),
+          (url_for('admin.create_doctor'), 'bi-person-plus', 'warning', 'Create Doctor', 'Add new doctor account'),
+        ] %}
+        <div class="col-md-3">
+          <a href="{{ href }}" class="text-decoration-none">
+            <div class="hc-card text-center p-3 h-100">
+              <i class="bi {{ icon }} text-{{ color }} fs-2 d-block mb-2"></i>
+              <div class="fw-semibold">{{ title }}</div>
+              <div class="text-muted small">{{ desc }}</div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Data Profile - HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="page-intro">
+    <span class="eyebrow"><i class="bi bi-table"></i>Dataset audit</span>
+    <h1 class="page-title">Data profile and split audit</h1>
+    <p class="page-subtitle">This page reflects the current production training workflow: source workbook, deduplication, dropped legacy columns, target balance, and the final train/validation/test split used by the trainer.</p>
+  </div>
+
+  <div class="metric-grid mb-4">
+    <div class="metric-card">
+      <div class="metric-label">Source workbook</div>
+      <div class="fw-semibold">{{ eda.get('source_file', 'Not available') }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Raw rows</div>
+      <div class="metric-value">{{ eda.get('raw_shape', [0, 0])[0] }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Rows after deduplication</div>
+      <div class="metric-value">{{ eda.get('final_shape_before_split', [0, 0])[0] }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Duplicates removed</div>
+      <div class="metric-value">{{ eda.get('duplicates_removed', 0) }}</div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="hc-card h-100">
+        <div class="card-header">Target balance</div>
+        <div class="card-body">
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Negative class</div>
+              <div class="metric-value">{{ eda.get('target_distribution', {}).get('0', 0) }}</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Positive class</div>
+              <div class="metric-value">{{ eda.get('target_distribution', {}).get('1', 0) }}</div>
+            </div>
+          </div>
+          <p class="small-note mt-3 mb-0">The project does not use SMOTE. Balanced class weights and threshold selection handle operating-point control without synthesizing new medical rows.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="hc-card h-100">
+        <div class="card-header">Split sizes</div>
+        <div class="card-body">
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Train</div>
+              <div class="metric-value">{{ eda.get('split_sizes', {}).get('train', 0) }}</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Validation</div>
+              <div class="metric-value">{{ eda.get('split_sizes', {}).get('validation', 0) }}</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Test</div>
+              <div class="metric-value">{{ eda.get('split_sizes', {}).get('test', 0) }}</div>
+            </div>
+          </div>
+          <p class="small-note mt-3 mb-0">Hyperparameter tuning runs only on the train split with stratified cross-validation. Calibration and threshold selection use validation. The test split is reserved for final evaluation only.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="hc-card h-100">
+        <div class="card-header">Current model reporting charts</div>
+        <div class="card-body">
+          <img src="{{ url_for('static', filename='charts/model_comparison.png') }}" alt="Model comparison chart" class="chart-img mb-3" />
+          <img src="{{ url_for('static', filename='charts/calibration_curve.png') }}" alt="Calibration curve" class="chart-img" />
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="hc-card h-100">
+        <div class="card-header">Audit notes</div>
+        <div class="card-body">
+          <ul class="mb-3">
+            <li>Legacy derived columns are dropped unless they are explicitly validated for the live feature contract.</li>
+            <li>Clinical-range sanitization is applied consistently in training and inference.</li>
+            <li>Outlier rows are not removed globally, so extreme but clinically plausible cases are preserved.</li>
+            <li>Probability calibration is part of the promoted artifact, not a UI-only display choice.</li>
+          </ul>
+          {% if eda.get('dropped_columns') %}
+          <div class="soft-panel">
+            <div class="metric-label">Dropped columns</div>
+            <div class="fw-semibold">{{ eda.get('dropped_columns')|join(', ') }}</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

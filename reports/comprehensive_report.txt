@@ -1,0 +1,162 @@
+
+================================================================================
+HEART DISEASE PREDICTION PIPELINE – COMPREHENSIVE REPORT
+================================================================================
+
+EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+This report documents the training of a machine learning pipeline to predict
+heart disease risk using the cleaned_heart_dataset.xlsx (9,797 records).
+The pipeline incorporates WHO medical safety guidelines for data validation.
+
+DATASET
+--------------------------------------------------------------------------------
+  - Total Records: 8,565
+  - Features: 15
+  - Train/Val/Test Split: 5,139 / 1,713 / 1,713
+  - Class Distribution: 4,906 (No Disease) vs 4,891 (Disease)
+  - Class Balance Ratio: 0.9970
+
+FEATURES USED
+--------------------------------------------------------------------------------
+   1. age                  - Age (years)
+   2. sex                  - Sex (1=Male, 0=Female)
+   3. cp                   - Chest Pain Type (0-3)
+   4. trestbps             - Resting BP (mm Hg)
+   5. chol                 - Total Cholesterol (mg/dL)
+   6. fbs                  - Fasting Blood Sugar >120 (1=Yes)
+   7. restecg              - Resting ECG (0-2)
+   8. thalachh             - Max Heart Rate (bpm)
+   9. exang                - Exercise Induced Angina (1=Yes)
+  10. oldpeak              - ST Depression
+  11. slope                - Slope of ST Segment (0-2)
+  12. ca                   - Major Vessels (0-4)
+  13. thal                 - Thalassemia (0,1,2,3,6,7)
+  14. bp_chol_ratio        - N/A
+  15. age_chol_interaction - N/A
+
+DATA CLEANING & WHO MEDICAL GUIDELINES
+--------------------------------------------------------------------------------
+Medical safety limits applied during data cleaning:
+
+  1. AGE: 18-100 years
+     Age in years (adult)
+
+  2. RESTING BLOOD PRESSURE (mmHg): 80-200
+     Resting BP: Normal <120, Elevated 120-129, High Stage 1 130-139, Stage 2 >=140
+
+  3. SERUM CHOLESTEROL (mg/dL): 100-400
+     Cholesterol: Desirable <200, Borderline 200-239, High >=240
+
+  4. MAX HEART RATE ACHIEVED (bpm): 60-220
+     Max heart rate: Healthy 60-100 bpm resting, target 60-100% of max with exercise
+
+  5. ST DEPRESSION: 0-10
+     ST depression induced by exercise (normal: 0, higher indicates more abnormality)
+
+Cleaning Steps Performed:
+  OK OK Standardized all column names to lowercase
+  OK OK Removed 1232 rows with outliers (IQR method)
+  OK OK Added engineered features: bp_chol_ratio, age_chol_interaction
+  OK OK Saved cleaned dataset: 8,565 rows, 16 columns
+
+MODEL TRAINING & RESULTS
+--------------------------------------------------------------------------------
+Hyperparameter tuning performed using GridSearchCV with 5-fold 
+Stratified K-Fold cross-validation to prevent class imbalance bias.
+Class weights were balanced to address the positive-class prediction bias.
+
+RESULTS SUMMARY
+--------------------------------------------------------------------------------
+
+Random Forest:
+  - Accuracy:        99.71%
+  - Precision:       99.88%
+  - Recall:          99.53%
+  - F1 Score:        99.70%
+  - AUC-ROC:         100.00%
+  - Validation Acc:  99.82%
+  - CV Best Score:   99.47%
+
+XGBoost:
+  - Accuracy:        99.71%
+  - Precision:       99.88%
+  - Recall:          99.53%
+  - F1 Score:        99.70%
+  - AUC-ROC:         100.00%
+  - Validation Acc:  99.65%
+  - CV Best Score:   99.59%
+
+SVM:
+  - Accuracy:        99.59%
+  - Precision:       99.29%
+  - Recall:          99.88%
+  - F1 Score:        99.59%
+  - AUC-ROC:         100.00%
+  - Validation Acc:  99.59%
+  - CV Best Score:   99.63%
+
+Logistic Regression:
+  - Accuracy:        81.09%
+  - Precision:       77.43%
+  - Recall:          86.97%
+  - F1 Score:        81.92%
+  - AUC-ROC:         88.68%
+  - Validation Acc:  79.68%
+  - CV Best Score:   81.44%
+
+================================================================================
+BEST MODEL: Random Forest
+================================================================================
+F1 Score: 99.70%
+Metrics:
+  - Accuracy:  99.71%
+  - Precision: 99.88%
+  - Recall:    99.53%
+  - AUC-ROC:   100.00%
+
+Best Hyperparameters:
+  - max_depth: 12
+  - max_features: sqrt
+  - min_samples_leaf: 2
+  - min_samples_split: 7
+  - n_estimators: 100
+
+IMPROVEMENTS MADE
+--------------------------------------------------------------------------------
+OK Used cleaned_heart_dataset.xlsx (9,797 balanced records)
+OK Applied WHO medical safety limits for data validation
+OK Implemented GridSearchCV with stratified k-fold for robust hyperparameter tuning
+OK Added class_weight='balanced' to address positive-class bias
+OK Proper train/val/test split (60/20/20) with stratification
+OK Feature engineering: bp_chol_ratio, age_chol_interaction
+OK Removed outliers using IQR method
+OK Comprehensive model comparison and ROC analysis
+
+ARTIFACTS SAVED
+--------------------------------------------------------------------------------
+  - Models: models/*.pkl
+  - Cleaned Data: data/cleaned_data.csv, data/cleaned_data.xlsx
+  - Metrics: reports/metrics.csv
+  - Visualizations: app/static/charts/
+    - target_dist.png
+    - heatmap.png
+    - histograms.png
+    - boxplots.png
+    - feature_importance.png
+    - model_comparison.png
+    - confusion_matrices.png
+    - roc_curves.png
+
+DEPLOYMENT NOTES
+--------------------------------------------------------------------------------
+The best model (Random Forest) should be used for production deployment.
+- Load model: joblib.load('models/best_model.pkl')
+- Load scaler: joblib.load('models/scaler.pkl')
+- Load features: joblib.load('models/feature_names.pkl')
+- Apply scaler before passing data to predict()
+- Ensure data adheres to WHO medical safety guidelines
+
+================================================================================
+Report Generated: 2026-04-19 23:33:21
+================================================================================

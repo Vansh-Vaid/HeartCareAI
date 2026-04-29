@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Prediction History - HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="page-intro d-flex flex-wrap justify-content-between gap-3 align-items-end">
+    <div>
+      <span class="eyebrow"><i class="bi bi-clock-history"></i>Saved screenings</span>
+      <h1 class="page-title">Your screening history</h1>
+      <p class="page-subtitle">Each saved result includes the risk estimate, screening outcome, and report links for later review.</p>
+    </div>
+    <a href="{{ url_for('predict.predict_form') }}" class="btn btn-primary">Start new screening</a>
+  </div>
+
+  {% if predictions %}
+  <div class="hc-card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table hc-table mb-0">
+          <thead>
+            <tr>
+              <th>Report ID</th>
+              <th>Patient</th>
+              <th>Risk estimate</th>
+              <th>Risk level</th>
+              <th>Confidence</th>
+              <th>Version</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for pred in predictions %}
+            <tr>
+              <td><code>RPT-{{ '%05d'|format(pred.id) }}</code></td>
+              <td>
+                <div class="fw-semibold">{{ pred.patient_name }}</div>
+                <div class="small-note">{{ pred.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</div>
+              </td>
+              <td class="fw-semibold">{{ "%.1f"|format(pred.risk_probability * 100) }}%</td>
+              <td><span class="risk-pill {{ pred.risk_level.split()[0]|lower }}">{{ pred.risk_level }}</span></td>
+              <td>{{ pred.confidence_label or 'N/A' }}</td>
+              <td class="small-note">{{ pred.model_version or 'N/A' }}</td>
+              <td>
+                <a href="{{ url_for('report.view', pred_id=pred.id) }}" class="btn btn-sm btn-outline-secondary me-1">View</a>
+                <a href="{{ url_for('report.download', pred_id=pred.id) }}" class="btn btn-sm btn-primary">PDF</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="hc-card text-center">
+    <div class="card-body py-5">
+      <h4 class="mb-2">No saved screenings yet</h4>
+      <p class="small-note mb-3">After you complete a screening, the result and report links will appear here.</p>
+      <a href="{{ url_for('predict.predict_form') }}" class="btn btn-primary">Start screening</a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

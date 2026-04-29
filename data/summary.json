@@ -1,0 +1,445 @@
+{
+  "eda": {
+    "source_file": "cleaned_heart_dataset.xlsx",
+    "raw_shape": [
+      9797,
+      14
+    ],
+    "dropped_columns": [],
+    "duplicates_removed": 0,
+    "final_shape_before_split": [
+      9797,
+      14
+    ],
+    "target_distribution": {
+      "0": 4906,
+      "1": 4891
+    },
+    "split_sizes": {
+      "train": 6857,
+      "validation": 1470,
+      "test": 1470
+    }
+  },
+  "model_results": {
+    "Logistic Regression": {
+      "accuracy": 77.48,
+      "precision": 70.62,
+      "recall": 94.01,
+      "f1": 80.65,
+      "auc": 87.44,
+      "sensitivity": 94.01,
+      "specificity": 61.01,
+      "brier": 0.1411,
+      "threshold": 0.175,
+      "calibration_method": "isotonic",
+      "confusion_matrix": [
+        [
+          449,
+          287
+        ],
+        [
+          44,
+          690
+        ]
+      ]
+    },
+    "Random Forest": {
+      "accuracy": 93.06,
+      "precision": 88.26,
+      "recall": 99.32,
+      "f1": 93.46,
+      "auc": 99.15,
+      "sensitivity": 99.32,
+      "specificity": 86.82,
+      "brier": 0.0353,
+      "threshold": 0.13,
+      "calibration_method": "isotonic",
+      "confusion_matrix": [
+        [
+          639,
+          97
+        ],
+        [
+          5,
+          729
+        ]
+      ]
+    },
+    "XGBoost": {
+      "accuracy": 89.18,
+      "precision": 83.47,
+      "recall": 97.68,
+      "f1": 90.02,
+      "auc": 98.16,
+      "sensitivity": 97.68,
+      "specificity": 80.71,
+      "brier": 0.0502,
+      "threshold": 0.13,
+      "calibration_method": "isotonic",
+      "confusion_matrix": [
+        [
+          594,
+          142
+        ],
+        [
+          17,
+          717
+        ]
+      ]
+    },
+    "Extra Trees": {
+      "accuracy": 90.0,
+      "precision": 85.07,
+      "recall": 97.0,
+      "f1": 90.64,
+      "auc": 97.63,
+      "sensitivity": 97.0,
+      "specificity": 83.02,
+      "brier": 0.0581,
+      "threshold": 0.12,
+      "calibration_method": "isotonic",
+      "confusion_matrix": [
+        [
+          611,
+          125
+        ],
+        [
+          22,
+          712
+        ]
+      ]
+    },
+    "Ensemble (Soft Vote)": {
+      "accuracy": 90.82,
+      "precision": 86.04,
+      "recall": 97.41,
+      "f1": 91.37,
+      "auc": 98.39,
+      "sensitivity": 97.41,
+      "specificity": 84.24,
+      "brier": 0.0492,
+      "threshold": 0.27,
+      "calibration_method": "soft_vote",
+      "confusion_matrix": [
+        [
+          620,
+          116
+        ],
+        [
+          19,
+          715
+        ]
+      ]
+    }
+  },
+  "best_model": "Random Forest",
+  "selected_model": {
+    "name": "Random Forest",
+    "threshold": 0.13,
+    "calibration_method": "isotonic",
+    "metrics": {
+      "threshold": 0.13,
+      "accuracy": 0.9306,
+      "balanced_accuracy": 0.9307,
+      "precision": 0.8826,
+      "recall": 0.9932,
+      "f1": 0.9346,
+      "roc_auc": 0.9915,
+      "brier_score": 0.0353,
+      "sensitivity": 0.9932,
+      "specificity": 0.8682,
+      "confusion_matrix": [
+        [
+          639,
+          97
+        ],
+        [
+          5,
+          729
+        ]
+      ]
+    }
+  },
+  "features": [
+    "age",
+    "sex",
+    "cp",
+    "trestbps",
+    "chol",
+    "fbs",
+    "restecg",
+    "thalachh",
+    "exang",
+    "oldpeak",
+    "slope",
+    "ca",
+    "thal"
+  ],
+  "feature_schema": [
+    {
+      "name": "age",
+      "label": "Age",
+      "kind": "numeric",
+      "unit": "years",
+      "description": "Patient age in completed years.",
+      "min_value": 20,
+      "max_value": 90,
+      "step": 1,
+      "normal_range": "20-65 years",
+      "choices": []
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "kind": "binary",
+      "unit": "0 = female, 1 = male",
+      "description": "Biological sex encoded for the source dataset.",
+      "min_value": 0,
+      "max_value": 1,
+      "step": 1,
+      "normal_range": "Dataset coded value",
+      "choices": [
+        [
+          0,
+          "Female"
+        ],
+        [
+          1,
+          "Male"
+        ]
+      ]
+    },
+    {
+      "name": "cp",
+      "label": "Chest Pain Type",
+      "kind": "categorical",
+      "unit": "clinical code",
+      "description": "Chest pain type reported during evaluation.",
+      "min_value": 0,
+      "max_value": 3,
+      "step": 1,
+      "normal_range": "0-3",
+      "choices": [
+        [
+          0,
+          "Typical angina"
+        ],
+        [
+          1,
+          "Atypical angina"
+        ],
+        [
+          2,
+          "Non-anginal pain"
+        ],
+        [
+          3,
+          "Asymptomatic"
+        ]
+      ]
+    },
+    {
+      "name": "trestbps",
+      "label": "Resting Blood Pressure",
+      "kind": "numeric",
+      "unit": "mm Hg",
+      "description": "Resting blood pressure measured on admission.",
+      "min_value": 80,
+      "max_value": 220,
+      "step": 1,
+      "normal_range": "<120 normal, 120-139 elevated, >=140 high",
+      "choices": []
+    },
+    {
+      "name": "chol",
+      "label": "Serum Cholesterol",
+      "kind": "numeric",
+      "unit": "mg/dL",
+      "description": "Serum cholesterol concentration.",
+      "min_value": 100,
+      "max_value": 600,
+      "step": 1,
+      "normal_range": "<200 desirable, 200-239 borderline, >=240 high",
+      "choices": []
+    },
+    {
+      "name": "fbs",
+      "label": "Fasting Blood Sugar > 120 mg/dL",
+      "kind": "binary",
+      "unit": "0 = no, 1 = yes",
+      "description": "Whether fasting blood sugar is above 120 mg/dL.",
+      "min_value": 0,
+      "max_value": 1,
+      "step": 1,
+      "normal_range": "0 or 1",
+      "choices": [
+        [
+          0,
+          "No"
+        ],
+        [
+          1,
+          "Yes"
+        ]
+      ]
+    },
+    {
+      "name": "restecg",
+      "label": "Resting ECG",
+      "kind": "categorical",
+      "unit": "clinical code",
+      "description": "Resting electrocardiogram result.",
+      "min_value": 0,
+      "max_value": 2,
+      "step": 1,
+      "normal_range": "0-2",
+      "choices": [
+        [
+          0,
+          "Normal"
+        ],
+        [
+          1,
+          "ST-T wave abnormality"
+        ],
+        [
+          2,
+          "Left ventricular hypertrophy"
+        ]
+      ]
+    },
+    {
+      "name": "thalachh",
+      "label": "Maximum Heart Rate Achieved",
+      "kind": "numeric",
+      "unit": "bpm",
+      "description": "Highest heart rate observed during stress testing.",
+      "min_value": 50,
+      "max_value": 220,
+      "step": 1,
+      "normal_range": "60-100 bpm resting; higher stress tolerance is typically favorable",
+      "choices": []
+    },
+    {
+      "name": "exang",
+      "label": "Exercise-Induced Angina",
+      "kind": "binary",
+      "unit": "0 = no, 1 = yes",
+      "description": "Whether exercise triggered angina symptoms.",
+      "min_value": 0,
+      "max_value": 1,
+      "step": 1,
+      "normal_range": "0 or 1",
+      "choices": [
+        [
+          0,
+          "No"
+        ],
+        [
+          1,
+          "Yes"
+        ]
+      ]
+    },
+    {
+      "name": "oldpeak",
+      "label": "ST Depression",
+      "kind": "numeric",
+      "unit": "mm",
+      "description": "ST depression induced by exercise relative to rest.",
+      "min_value": 0.0,
+      "max_value": 7.0,
+      "step": 0.1,
+      "normal_range": "0-1 generally reassuring, >1 warrants attention",
+      "choices": []
+    },
+    {
+      "name": "slope",
+      "label": "ST Slope",
+      "kind": "categorical",
+      "unit": "clinical code",
+      "description": "Slope of the peak exercise ST segment.",
+      "min_value": 0,
+      "max_value": 2,
+      "step": 1,
+      "normal_range": "0-2",
+      "choices": [
+        [
+          0,
+          "Upsloping"
+        ],
+        [
+          1,
+          "Flat"
+        ],
+        [
+          2,
+          "Downsloping"
+        ]
+      ]
+    },
+    {
+      "name": "ca",
+      "label": "Major Vessels Colored by Fluoroscopy",
+      "kind": "categorical",
+      "unit": "count",
+      "description": "Number of major vessels colored by fluoroscopy.",
+      "min_value": 0,
+      "max_value": 3,
+      "step": 1,
+      "normal_range": "0-3",
+      "choices": [
+        [
+          0,
+          "0"
+        ],
+        [
+          1,
+          "1"
+        ],
+        [
+          2,
+          "2"
+        ],
+        [
+          3,
+          "3"
+        ]
+      ]
+    },
+    {
+      "name": "thal",
+      "label": "Thalassemia",
+      "kind": "categorical",
+      "unit": "clinical code",
+      "description": "Thalassemia status encoded in the source dataset.",
+      "min_value": 1,
+      "max_value": 7,
+      "step": 1,
+      "normal_range": "1, 2, 3, 6, or 7",
+      "choices": [
+        [
+          1,
+          "Fixed defect"
+        ],
+        [
+          2,
+          "Reversible defect"
+        ],
+        [
+          3,
+          "Normal"
+        ],
+        [
+          6,
+          "Type 6"
+        ],
+        [
+          7,
+          "Type 7"
+        ]
+      ]
+    }
+  ]
+}

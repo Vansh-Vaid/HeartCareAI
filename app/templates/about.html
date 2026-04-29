@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}About - HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="page-intro">
+    <span class="eyebrow"><i class="bi bi-heart-pulse"></i>About HeartCare AI</span>
+    <h1 class="page-title">A simpler way to understand heart screening results</h1>
+    <p class="page-subtitle">HeartCare AI is designed to help patients and clinicians review heart screening information more clearly, with guided forms, simple explanations, and downloadable reports.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="hc-card h-100">
+        <div class="card-header">What this app helps you do</div>
+        <div class="card-body">
+          <ul class="mb-0">
+            <li>Enter heart-related test values in one guided screening form.</li>
+            <li>Receive a risk estimate with explanation notes and easy-to-read labels.</li>
+            <li>Save reports for future review or share them with a doctor.</li>
+            <li>Use the built-in guide to understand difficult terms in plain language.</li>
+            <li>Keep the result in context: the app supports follow-up, not diagnosis.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="hc-card h-100">
+        <div class="card-header">How the app stays careful</div>
+        <div class="card-body">
+          <div class="metric-grid">
+            <div class="metric-card"><div class="metric-label">Checks inputs</div><div>Looks for missing or invalid values before showing a result.</div></div>
+            <div class="metric-card"><div class="metric-label">Explains results</div><div>Shows the estimate, confidence wording, and likely reasons behind it.</div></div>
+            <div class="metric-card"><div class="metric-label">Saves reports</div><div>Lets users download a summary for later review.</div></div>
+            <div class="metric-card"><div class="metric-label">Adds guidance</div><div>The help guide explains terms and reminds users to consult a clinician.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

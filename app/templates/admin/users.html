@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Users – Admin{% endblock %}
+{% block content %}
+<div class="container-fluid" style="padding-top:80px;">
+  <div class="row">
+    <div class="col-md-2 admin-sidebar d-none d-md-block">
+      <h6 class="text-muted small text-uppercase mb-3 ps-2">Admin Panel</h6>
+      <ul class="nav flex-column gap-1">
+        <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+        <li><a href="{{ url_for('admin.doctors') }}" class="nav-link"><i class="bi bi-person-badge"></i>Doctors</a></li>
+        <li><a href="{{ url_for('admin.patients') }}" class="nav-link"><i class="bi bi-people"></i>Patients</a></li>
+        <li><a href="{{ url_for('admin.users') }}" class="nav-link active"><i class="bi bi-person-lock"></i>Users</a></li>
+        <li><a href="{{ url_for('admin.all_predictions') }}" class="nav-link"><i class="bi bi-clipboard2-pulse"></i>Predictions</a></li>
+        <li><a href="{{ url_for('admin.create_doctor') }}" class="nav-link"><i class="bi bi-person-plus"></i>New Doctor</a></li>
+      </ul>
+    </div>
+    <div class="col-md-10 p-4">
+      <h2 class="fw-bold mb-4">All Users</h2>
+      <div class="hc-card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table hc-table mb-0">
+              <thead><tr><th>ID</th><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Active</th><th>Joined</th><th>Reset Password</th></tr></thead>
+              <tbody>
+                {% for u in users %}
+                <tr>
+                  <td>{{ u.id }}</td>
+                  <td class="fw-semibold">{{ u.username }}</td>
+                  <td>{{ u.full_name }}</td>
+                  <td class="text-muted small">{{ u.email }}</td>
+                  <td>
+                    <span class="badge {% if u.role == 'admin' %}bg-danger{% elif u.role == 'doctor' %}bg-primary{% else %}bg-success{% endif %}">
+                      {{ u.role|capitalize }}
+                    </span>
+                  </td>
+                  <td>{% if u.is_active %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}<i class="bi bi-x-circle-fill text-danger"></i>{% endif %}</td>
+                  <td class="text-muted small">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                  <td>
+                    <form method="POST" action="{{ url_for('admin.reset_password', user_id=u.id) }}" class="d-flex gap-2">
+                      <input type="text" name="new_password" class="form-control form-control-sm" placeholder="New password" style="width:130px;" required />
+                      <button type="submit" class="btn btn-sm btn-warning"><i class="bi bi-key"></i></button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

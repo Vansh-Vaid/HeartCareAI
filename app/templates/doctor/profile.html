@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Doctor Profile – HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="row g-4">
+
+    <!-- Doctor Profile Card -->
+    <div class="col-lg-4">
+      <div class="hc-card text-center p-4 mb-4">
+        <div class="doctor-avatar mx-auto mb-3" style="width:100px;height:100px;font-size:2.5rem;">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <h4 class="fw-bold mb-1">{{ doc.name }}</h4>
+        <p class="text-primary mb-2">{{ doc.specialization }}</p>
+        <div class="availability-badge {% if doc.available %}available{% else %}unavailable{% endif %} mx-auto mb-3">
+          <i class="bi bi-circle-fill" style="font-size:.5rem;"></i>
+          {% if doc.available %}Available{% else %}Unavailable{% endif %}
+        </div>
+
+        <hr class="divider" />
+
+        <dl class="text-start mb-0">
+          <dt class="small text-muted">Doctor ID</dt>
+          <dd class="fw-semibold mb-2">{{ doc.doctor_id }}</dd>
+          <dt class="small text-muted">Hospital</dt>
+          <dd class="fw-semibold mb-2">{{ doc.hospital }}</dd>
+          <dt class="small text-muted">Experience</dt>
+          <dd class="fw-semibold mb-2">{{ doc.experience }} years</dd>
+          <dt class="small text-muted">Phone</dt>
+          <dd class="fw-semibold mb-2">{{ doc.phone }}</dd>
+          <dt class="small text-muted">Email</dt>
+          <dd class="fw-semibold mb-2 small">{{ doc.email }}</dd>
+          <dt class="small text-muted">Assigned Patients</dt>
+          <dd class="fw-semibold mb-0">{{ patients|length }}</dd>
+        </dl>
+      </div>
+
+      <!-- Bio -->
+      <div class="hc-card">
+        <div class="card-header"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Professional Bio</div>
+        <div class="card-body">
+          <p class="text-muted small mb-0">{{ doc.bio or 'No bio provided.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patients List -->
+    <div class="col-lg-8">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0">My Patients</h3>
+        <span class="badge bg-primary fs-6">{{ patients|length }} total</span>
+      </div>
+
+      {% if patients %}
+      <div class="row g-3">
+        {% for pt in patients %}
+        <div class="col-md-6">
+          <div class="hc-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="fw-bold mb-0">{{ pt.name }}</h6>
+                <span class="badge bg-secondary small">{{ pt.patient_id }}</span>
+              </div>
+              <div class="row g-1 text-muted small mb-3">
+                <div class="col-6"><i class="bi bi-calendar me-1"></i>Age: {{ pt.age }}</div>
+                <div class="col-6"><i class="bi bi-person me-1"></i>{% if pt.sex==1 %}Male{% else %}Female{% endif %}</div>
+                <div class="col-12"><i class="bi bi-clipboard2 me-1"></i>{{ pt.predictions|length }} screenings</div>
+              </div>
+              {% if pt.predictions %}
+              {% set last = pt.predictions[-1] %}
+              <div class="eda-stat">
+                <span class="small">Latest result: </span>
+                <span class="badge {% if last.final_prediction==1 %}bg-danger{% else %}bg-success{% endif %} small">
+                  {{ last.risk_level }}
+                </span>
+                <span class="text-muted small ms-1">{{ last.created_at.strftime('%m/%d/%Y') }}</span>
+              </div>
+              {% endif %}
+              <div class="mt-3">
+                <a href="{{ url_for('doctor.patient_detail', pat_id=pt.id) }}" class="btn btn-sm btn-outline-light w-100">
+                  <i class="bi bi-eye me-1"></i>Open patient summary
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="hc-card p-5 text-center">
+        <i class="bi bi-people fs-1 text-muted d-block mb-3"></i>
+        <p class="text-muted">No patients assigned yet.</p>
+        <p class="text-muted small">Assigned patients and their latest screening status will appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

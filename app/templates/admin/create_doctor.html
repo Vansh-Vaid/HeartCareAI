@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Create Doctor – Admin{% endblock %}
+{% block content %}
+<div class="container section-py" style="max-width:700px;">
+  <div class="mb-4">
+    <a href="{{ url_for('admin.doctors') }}" class="text-muted small"><i class="bi bi-arrow-left me-1"></i>Back to Doctors</a>
+  </div>
+  <div class="hc-card">
+    <div class="card-header"><i class="bi bi-person-plus me-2 text-primary"></i>Create Doctor Account</div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control" placeholder="Dr. First Last" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email / Username <span class="text-danger">*</span></label>
+            <input type="email" name="email" class="form-control" placeholder="doctor@heartcare.com" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Specialization</label>
+            <select name="specialization" class="form-select">
+              <option>Cardiologist</option>
+              <option>Cardiac Surgeon</option>
+              <option>Electrophysiologist</option>
+              <option>General Physician</option>
+              <option>Interventional Cardiologist</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Experience (years)</label>
+            <input type="number" name="experience" class="form-control" placeholder="10" min="0" max="50" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Hospital / Clinic</label>
+            <input type="text" name="hospital" class="form-control" placeholder="Apollo Hospital" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control" placeholder="+91-9876543210" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Bio / Profile Summary</label>
+            <textarea name="bio" class="form-control" rows="3" placeholder="Brief professional bio..."></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Initial Password <span class="text-danger">*</span></label>
+            <input type="text" name="password" class="form-control" value="doctor@123" required />
+            <small class="text-muted">Inform the doctor to change this after first login.</small>
+          </div>
+        </div>
+        <hr class="divider my-4" />
+        <div class="d-flex gap-3">
+          <button type="submit" class="btn btn-primary px-4">
+            <i class="bi bi-person-check me-2"></i>Create Account
+          </button>
+          <a href="{{ url_for('admin.doctors') }}" class="btn btn-outline-light">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

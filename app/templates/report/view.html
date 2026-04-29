@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Report View - HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="page-intro d-flex flex-wrap justify-content-between gap-3 align-items-end">
+    <div>
+      <span class="eyebrow"><i class="bi bi-file-earmark-medical"></i>Saved report</span>
+      <h1 class="page-title">Report {{ 'RPT-%05d'|format(pred.id) }}</h1>
+      <p class="page-subtitle">This report captures the screening result, key inputs, and follow-up context for this case.</p>
+    </div>
+    <a href="{{ url_for('report.download', pred_id=pred.id) }}" class="btn btn-primary">Download PDF</a>
+  </div>
+
+  <div class="result-hero mb-4">
+    <div>
+      <div class="risk-stack">
+        <span class="risk-pill {{ pred.risk_level.split()[0]|lower }}">{{ pred.risk_level }}</span>
+        <span class="badge-chip">{{ pred.confidence_label or 'N/A' }}</span>
+        <span class="badge-chip">{{ pred.model_name or 'Promoted model' }}</span>
+      </div>
+      <h2 class="section-heading mb-2">{{ "%.1f"|format(pred.risk_probability * 100) }}% risk estimate</h2>
+      <p class="result-callout">{{ explanation.summary }}</p>
+      <div class="probability-meter mt-4">
+        <div class="probability-fill" data-probability-width="{{ (pred.risk_probability * 100)|round(1) }}"></div>
+        <span class="threshold-marker" style="left: {{ (pred.threshold_used * 100)|round(1) }}%;"></span>
+      </div>
+    </div>
+    <div class="soft-panel">
+      <div class="metric-grid">
+        <div class="sidebar-metric">
+          <div class="metric-label">Alert level</div>
+          <div class="metric-value" style="font-size:1.1rem;">{{ "%.1f"|format(pred.threshold_used * 100) }}%</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="metric-label">Model version</div>
+          <div class="fw-semibold">{{ pred.model_version or 'N/A' }}</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="metric-label">Generated</div>
+          <div class="fw-semibold">{{ pred.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="metric-label">Patient</div>
+          <div class="fw-semibold">{{ pred.patient_name }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="hc-card mb-4">
+        <div class="card-header">Explanation notes</div>
+        <div class="card-body">
+          <div class="driver-list mb-4">
+            {% for item in explanation.drivers %}
+            <div class="driver-item">{{ item }}</div>
+            {% endfor %}
+          </div>
+          <div class="support-list">
+            {% for item in explanation.supporting_factors %}
+            <div class="support-item">{{ item }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      {% if input_audit %}
+      <div class="hc-card">
+        <div class="card-header">Input checks</div>
+        <div class="card-body">
+          <ul class="mb-0">
+            {% for item in input_audit %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-5">
+      <div class="hc-card mb-4">
+        <div class="card-header">Values used in this screening</div>
+        <div class="card-body p-0">
+          <table class="table hc-table mb-0">
+            <thead><tr><th>Field</th><th>Value</th><th>Unit</th></tr></thead>
+            <tbody>
+              {% for key, value in inp.items() %}
+              <tr>
+                <td>{{ feature_labels.get(key, (key,))[0] }}</td>
+                <td class="fw-semibold">{{ value }}</td>
+                <td class="small-note">{{ feature_labels.get(key, ('', '', '', ''))[1] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="hc-card mb-4">
+        <div class="card-header">Model details</div>
+        <div class="card-body">
+          <div class="small-note">Promoted model</div>
+          <div class="fw-semibold mb-2">{{ pred.model_name or model_summary.get('selected_model_name', 'N/A') }}</div>
+          <div class="small-note">Model version</div>
+          <div class="fw-semibold mb-2">{{ pred.model_version or model_summary.get('model_version', 'N/A') }}</div>
+          <div class="small-note">Saved alert level</div>
+          <div class="fw-semibold">{{ "%.2f"|format(pred.threshold_used) }}</div>
+        </div>
+      </div>
+
+      {% if assigned_doc %}
+      <div class="hc-card">
+        <div class="card-header">Assigned doctor</div>
+        <div class="card-body text-center">
+          <div class="doctor-avatar mx-auto mb-3"><i class="bi bi-person"></i></div>
+          <h5 class="mb-1">{{ assigned_doc.name }}</h5>
+          <p class="small-note mb-1">{{ assigned_doc.specialization }}</p>
+          <p class="small-note mb-0">{{ assigned_doc.hospital }}</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="alert-note mt-4">{{ explanation.disclaimer }}</div>
+</div>
+{% endblock %}

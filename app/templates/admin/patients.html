@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Patients – Admin{% endblock %}
+{% block content %}
+<div class="container-fluid" style="padding-top:80px;">
+  <div class="row">
+    <div class="col-md-2 admin-sidebar d-none d-md-block">
+      <h6 class="text-muted small text-uppercase mb-3 ps-2">Admin Panel</h6>
+      <ul class="nav flex-column gap-1">
+        <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+        <li><a href="{{ url_for('admin.doctors') }}" class="nav-link"><i class="bi bi-person-badge"></i>Doctors</a></li>
+        <li><a href="{{ url_for('admin.patients') }}" class="nav-link active"><i class="bi bi-people"></i>Patients</a></li>
+        <li><a href="{{ url_for('admin.users') }}" class="nav-link"><i class="bi bi-person-lock"></i>Users</a></li>
+        <li><a href="{{ url_for('admin.all_predictions') }}" class="nav-link"><i class="bi bi-clipboard2-pulse"></i>Predictions</a></li>
+        <li><a href="{{ url_for('admin.create_doctor') }}" class="nav-link"><i class="bi bi-person-plus"></i>New Doctor</a></li>
+      </ul>
+    </div>
+    <div class="col-md-10 p-4">
+      <h2 class="fw-bold mb-4">Patient Records</h2>
+      <div class="hc-card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table hc-table mb-0">
+              <thead><tr><th>ID</th><th>Name</th><th>Age</th><th>Created</th><th>Assigned Doctor</th><th>Predictions</th><th>Assign Doctor</th></tr></thead>
+              <tbody>
+                {% for pt in patients %}
+                <tr>
+                  <td><code class="text-primary small">{{ pt.patient_id }}</code></td>
+                  <td class="fw-semibold">{{ pt.name }}</td>
+                  <td>{{ pt.age }}</td>
+                  <td class="text-muted small">{{ pt.created_at.strftime('%Y-%m-%d') }}</td>
+                  <td>{% if pt.doctor %}<span class="badge bg-primary">{{ pt.doctor.name }}</span>{% else %}<span class="badge bg-secondary">Unassigned</span>{% endif %}</td>
+                  <td>{{ pt.predictions|length }}</td>
+                  <td>
+                    <form method="POST" action="{{ url_for('admin.assign_doctor', pat_id=pt.id) }}" class="d-flex gap-2">
+                      <select name="doctor_id" class="form-select form-select-sm" style="width:160px;">
+                        {% for doc in doctors %}<option value="{{ doc.id }}" {% if pt.doctor_id == doc.id %}selected{% endif %}>{{ doc.name }}</option>{% endfor %}
+                      </select>
+                      <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-check"></i></button>
+                    </form>
+                  </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No patients yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

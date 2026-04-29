@@ -1,0 +1,5 @@
+Clipped 11 out-of-range values in 'chol' [100,400]
+Clipped 25 out-of-range values in 'thalachh' [60,200]
+Removed 62 rows with thal=0 (clinically invalid)
+Removed 118 statistical outliers (Z>3.5)
+Final cleaned shape: 9617 rows x 14 cols

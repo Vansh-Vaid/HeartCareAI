@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Heart Disease Screening - HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="page-intro">
+    <span class="eyebrow"><i class="bi bi-clipboard2-pulse"></i>Heart screening</span>
+    <h1 class="page-title">Enter the screening details</h1>
+    <p class="page-subtitle">Fill in the patient details and test results below. The app will check the values, estimate heart risk, and explain the result in simpler language.</p>
+  </div>
+
+  <form id="prediction-form" method="POST" action="{{ url_for('predict.predict_result') }}" novalidate>
+    <div class="row g-4">
+      <div class="col-xl-8">
+        <div class="hc-wizard mb-4">
+          <div class="hc-wizard-top">
+            <div class="hc-wizard-title">Step <span data-step-current>1</span> of <span data-step-total>{{ feature_groups|length + 1 }}</span></div>
+            <div class="hc-wizard-subtitle small-note" data-step-title>Patient details</div>
+          </div>
+          <div class="hc-wizard-progress" aria-label="Screening steps">
+            <button type="button" class="hc-step-chip is-active" data-step-jump="0">Patient</button>
+            {% for group in feature_groups %}
+            <button type="button" class="hc-step-chip" data-step-jump="{{ loop.index }}">{{ group.title }}</button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <section class="hc-step is-active" data-step="0" data-step-name="Patient details">
+        <div class="hc-card mb-4">
+          <div class="card-header">Patient details</div>
+          <div class="card-body">
+            <p class="small-note mb-3">Start with the person’s name and, if needed, connect the result to a doctor for follow-up.</p>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="field-label" for="patient_name"><span>Patient name</span></label>
+                <input id="patient_name" name="patient_name" class="form-control" type="text" placeholder="Enter full name" required />
+              </div>
+              <div class="col-md-6">
+                <label class="field-label" for="doctor_id"><span>Assign doctor</span><span class="range-inline">Optional</span></label>
+                <select id="doctor_id" name="doctor_id" class="form-select">
+                  <option value="">No doctor assigned yet</option>
+                  {% for doctor in doctors %}
+                  <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialization }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        </section>
+
+        {% for group in feature_groups %}
+        <section class="hc-step" data-step="{{ loop.index }}" data-step-name="{{ group.title }}">
+        <div class="hc-card mb-4">
+          <div class="card-header">{{ group.title }}</div>
+          <div class="card-body">
+            <p class="small-note mb-3">{{ group.description }}</p>
+            <div class="row g-3">
+              {% for spec in group.fields %}
+              <div class="col-md-6">
+                <label class="field-label" for="{{ spec.name }}">
+                  <span>{{ spec.label }}</span>
+                  {% if spec.kind == 'numeric' %}
+                  <span class="range-inline">{{ spec.unit }}</span>
+                  {% endif %}
+                </label>
+
+                {% if spec.kind == 'numeric' %}
+                <input
+                  id="{{ spec.name }}"
+                  name="{{ spec.name }}"
+                  type="number"
+                  class="form-control"
+                  min="{{ spec.min_value }}"
+                  max="{{ spec.max_value }}"
+                  step="{{ spec.step }}"
+                  placeholder="Expected range: {{ spec.min_value }} - {{ spec.max_value }}"
+                  required
+                />
+                {% else %}
+                <select id="{{ spec.name }}" name="{{ spec.name }}" class="form-select" required>
+                  <option value="" selected disabled>Select an option</option>
+                  {% for value, label in spec.choices %}
+                  <option value="{{ value }}">{{ label }}</option>
+                  {% endfor %}
+                </select>
+                {% endif %}
+
+                <div class="field-hint mt-2">{{ spec.description }}</div>
+                <div class="range-inline mt-1">Helpful range: {{ spec.normal_range }}</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        </section>
+        {% endfor %}
+
+        <div class="alert-note">
+          The result is a screening estimate, not a diagnosis. Use it together with symptoms, history, and a clinician’s advice.
+        </div>
+
+        <div class="hc-wizard-actions mt-3">
+          <button type="button" class="btn btn-outline-secondary" data-step-back>
+            <i class="bi bi-arrow-left me-2"></i>Back
+          </button>
+          <button type="button" class="btn btn-primary" data-step-next>
+            Next<i class="bi bi-arrow-right ms-2"></i>
+          </button>
+          <button type="submit" class="btn btn-primary" data-step-submit>
+            <i class="bi bi-activity me-2"></i>Get risk estimate
+          </button>
+        </div>
+      </div>
+
+      <div class="col-xl-4">
+        <div class="hc-card position-sticky" style="top: 108px;">
+          <div class="card-header">What happens next</div>
+          <div class="card-body">
+            <p class="small-note mb-3">After you submit the form, the app reviews the values and gives a result page you can save or share.</p>
+            <div class="metric-grid mb-3">
+              <div class="metric-card">
+                <div class="metric-label">Current model</div>
+                <div class="metric-value" style="font-size:1.1rem;">{{ model_meta.selected_model_name }}</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Alert level</div>
+                <div class="metric-value">{{ "%.0f"|format(model_meta.threshold * 100) }}%</div>
+              </div>
+            </div>
+            <ol class="ps-3 mb-3 small-note">
+              <li class="mb-2">The app checks that the values look valid.</li>
+              <li class="mb-2">It calculates a heart risk estimate from the test data.</li>
+              <li class="mb-2">That estimate is compared with the saved alert level.</li>
+              <li class="mb-0">You get a result summary, explanation notes, and a report you can download.</li>
+            </ol>
+            <div class="soft-panel">
+              <div class="metric-label">Model version</div>
+              <div class="fw-semibold">{{ model_meta.model_version }}</div>
+            </div>
+            <div class="small-note mt-3" data-step-helper>
+              Use <strong>Next</strong> to move through steps. On the last step you can submit to get the result.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Help and FAQ - HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="page-intro">
+    <span class="eyebrow"><i class="bi bi-life-preserver"></i>Support</span>
+    <h1 class="page-title">Help, questions, and safety notes</h1>
+    <p class="page-subtitle">Use this page if you need help understanding the screening flow, saved reports, or the limits of the result.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="hc-card h-100">
+        <div class="card-header">Quick help</div>
+        <div class="card-body">
+          <p class="mb-2"><strong>Email support:</strong> support@heartcare.ai</p>
+          <p class="mb-2"><strong>Need a saved report?</strong> Open your history page after signing in.</p>
+          <p class="mb-0"><strong>Need help with terms?</strong> Use the Help Guide on screening pages for simple explanations.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="hc-card">
+        <div class="card-header">Frequently asked questions</div>
+        <div class="card-body">
+          <div class="accordion" id="faqAccordion">
+            {% for question, answer in [
+              ('What does the risk percentage mean?', "It is the app's estimate of how strongly the entered pattern matches cases that may need heart-related follow-up. It is not a diagnosis."),
+              ('Why is there an alert level?', 'The alert level is the point where the app changes from a lower-risk screen to a higher-risk screen. It helps turn the percentage into an easier action signal.'),
+              ('Can I use this instead of a doctor?', 'No. This tool supports screening and follow-up discussion, but it cannot replace a doctor, urgent care, or emergency services.'),
+              ('What does the confidence label mean?', 'It shows how close the result is to the alert level. Results very close to the cut point are less certain than results far away from it.'),
+              ('What can the chatbot answer?', 'It can explain medical terms, result wording, and next steps in simple language. It will not diagnose or prescribe treatment.'),
+            ] %}
+            <div class="accordion-item border-0 border-bottom">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}">{{ question }}</button>
+              </h2>
+              <div id="faq{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">{{ answer }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-note mt-4">
+    Medical disclaimer: HeartCare AI gives a screening estimate only. Any higher-risk or lower-risk result should still be reviewed alongside symptoms, history, and professional clinical judgment.
+  </div>
+</div>
+{% endblock %}

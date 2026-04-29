@@ -1,0 +1,235 @@
+{
+  "title": "Heart Disease Prediction \u2013 ML Pipeline Report",
+  "dataset": {
+    "source": "cleaned_heart_dataset.xlsx",
+    "total_rows": 8565,
+    "features": 15,
+    "train_size": 5139,
+    "val_size": 1713,
+    "test_size": 1713,
+    "class_distribution": {
+      "no_disease": 4906,
+      "disease": 4891,
+      "ratio": 0.997
+    }
+  },
+  "data_cleaning": {
+    "audit_log": [
+      "OK Standardized all column names to lowercase",
+      "OK Removed 1232 rows with outliers (IQR method)",
+      "OK Added engineered features: bp_chol_ratio, age_chol_interaction",
+      "OK Saved cleaned dataset: 8,565 rows, 16 columns"
+    ],
+    "medical_guidelines_applied": {
+      "age": "18-100 years",
+      "blood_pressure": "80-200 mmHg",
+      "cholesterol": "100-400 mg/dL",
+      "max_heart_rate": "60-220 bpm"
+    }
+  },
+  "model_results": {
+    "Random Forest": {
+      "accuracy": 99.71,
+      "precision": 99.88,
+      "recall": 99.53,
+      "f1": 99.7,
+      "auc": 100.0,
+      "val_accuracy": 99.82,
+      "confusion_matrix": [
+        [
+          868,
+          1
+        ],
+        [
+          4,
+          840
+        ]
+      ],
+      "best_params": {
+        "max_depth": 12,
+        "max_features": "sqrt",
+        "min_samples_leaf": 2,
+        "min_samples_split": 7,
+        "n_estimators": 100
+      },
+      "cv_best_score": 99.47
+    },
+    "XGBoost": {
+      "accuracy": 99.71,
+      "precision": 99.88,
+      "recall": 99.53,
+      "f1": 99.7,
+      "auc": 100.0,
+      "val_accuracy": 99.65,
+      "confusion_matrix": [
+        [
+          868,
+          1
+        ],
+        [
+          4,
+          840
+        ]
+      ],
+      "best_params": {
+        "colsample_bytree": 0.8,
+        "learning_rate": 0.1,
+        "max_depth": 6,
+        "n_estimators": 150,
+        "subsample": 0.8
+      },
+      "cv_best_score": 99.59
+    },
+    "SVM": {
+      "accuracy": 99.59,
+      "precision": 99.29,
+      "recall": 99.88,
+      "f1": 99.59,
+      "auc": 100.0,
+      "val_accuracy": 99.59,
+      "confusion_matrix": [
+        [
+          863,
+          6
+        ],
+        [
+          1,
+          843
+        ]
+      ],
+      "best_params": {
+        "C": 5,
+        "gamma": "scale",
+        "kernel": "rbf"
+      },
+      "cv_best_score": 99.63
+    },
+    "Logistic Regression": {
+      "accuracy": 81.09,
+      "precision": 77.43,
+      "recall": 86.97,
+      "f1": 81.92,
+      "auc": 88.68,
+      "val_accuracy": 79.68,
+      "confusion_matrix": [
+        [
+          655,
+          214
+        ],
+        [
+          110,
+          734
+        ]
+      ],
+      "best_params": {
+        "C": 0.01,
+        "penalty": "l2",
+        "solver": "lbfgs"
+      },
+      "cv_best_score": 81.44
+    }
+  },
+  "best_model": {
+    "name": "Random Forest",
+    "f1_score": 99.70326409495549,
+    "metrics": {
+      "accuracy": 99.71,
+      "precision": 99.88,
+      "recall": 99.53,
+      "f1": 99.7,
+      "auc": 100.0,
+      "val_accuracy": 99.82,
+      "confusion_matrix": [
+        [
+          868,
+          1
+        ],
+        [
+          4,
+          840
+        ]
+      ],
+      "best_params": {
+        "max_depth": 12,
+        "max_features": "sqrt",
+        "min_samples_leaf": 2,
+        "min_samples_split": 7,
+        "n_estimators": 100
+      },
+      "cv_best_score": 99.47
+    }
+  },
+  "features": [
+    "age",
+    "sex",
+    "cp",
+    "trestbps",
+    "chol",
+    "fbs",
+    "restecg",
+    "thalachh",
+    "exang",
+    "oldpeak",
+    "slope",
+    "ca",
+    "thal",
+    "bp_chol_ratio",
+    "age_chol_interaction"
+  ],
+  "feature_metadata": {
+    "age": "Age (years)",
+    "sex": "Sex (1=Male, 0=Female)",
+    "cp": "Chest Pain Type (0-3)",
+    "trestbps": "Resting BP (mm Hg)",
+    "chol": "Total Cholesterol (mg/dL)",
+    "fbs": "Fasting Blood Sugar >120 (1=Yes)",
+    "restecg": "Resting ECG (0-2)",
+    "thalachh": "Max Heart Rate (bpm)",
+    "exang": "Exercise Induced Angina (1=Yes)",
+    "oldpeak": "ST Depression",
+    "slope": "Slope of ST Segment (0-2)",
+    "ca": "Major Vessels (0-4)",
+    "thal": "Thalassemia (0,1,2,3,6,7)",
+    "target": "Heart Disease (1=Yes)"
+  },
+  "who_guidelines": {
+    "age": {
+      "min": 18,
+      "max": 100,
+      "description": "Age in years (adult)"
+    },
+    "trestbps": {
+      "normal_max": 120,
+      "elevated_max": 129,
+      "high_stage1_max": 139,
+      "high_stage2_min": 140,
+      "safe_range": [
+        80,
+        200
+      ],
+      "description": "Resting BP: Normal <120, Elevated 120-129, High Stage 1 130-139, Stage 2 >=140"
+    },
+    "chol": {
+      "desirable_max": 200,
+      "borderline_max": 239,
+      "high_min": 240,
+      "safe_range": [
+        100,
+        400
+      ],
+      "description": "Cholesterol: Desirable <200, Borderline 200-239, High >=240"
+    },
+    "thalachh": {
+      "min": 60,
+      "max": 220,
+      "description": "Max heart rate: Healthy 60-100 bpm resting, target 60-100% of max with exercise"
+    },
+    "oldpeak": {
+      "range": [
+        0,
+        10
+      ],
+      "description": "ST depression induced by exercise (normal: 0, higher indicates more abnormality)"
+    }
+  }
+}

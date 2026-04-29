@@ -1,0 +1,5 @@
+,accuracy,precision,recall,f1,auc,val_accuracy,confusion_matrix,best_params,cv_best_score
+Random Forest,99.71,99.88,99.53,99.7,100.0,99.82,"[[868, 1], [4, 840]]","{'max_depth': 12, 'max_features': 'sqrt', 'min_samples_leaf': 2, 'min_samples_split': 7, 'n_estimators': 100}",99.47
+XGBoost,99.71,99.88,99.53,99.7,100.0,99.65,"[[868, 1], [4, 840]]","{'colsample_bytree': 0.8, 'learning_rate': 0.1, 'max_depth': 6, 'n_estimators': 150, 'subsample': 0.8}",99.59
+SVM,99.59,99.29,99.88,99.59,100.0,99.59,"[[863, 6], [1, 843]]","{'C': 5, 'gamma': 'scale', 'kernel': 'rbf'}",99.63
+Logistic Regression,81.09,77.43,86.97,81.92,88.68,79.68,"[[655, 214], [110, 734]]","{'C': 0.01, 'penalty': 'l2', 'solver': 'lbfgs'}",81.44

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}All Predictions - Admin{% endblock %}
+{% block content %}
+<div class="container-fluid" style="padding-top: 96px;">
+  <div class="row">
+    <div class="col-md-2 admin-sidebar d-none d-md-block">
+      <ul class="nav flex-column gap-1">
+        <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">Dashboard</a></li>
+        <li><a href="{{ url_for('admin.doctors') }}" class="nav-link">Doctors</a></li>
+        <li><a href="{{ url_for('admin.patients') }}" class="nav-link">Patients</a></li>
+        <li><a href="{{ url_for('admin.users') }}" class="nav-link">Users</a></li>
+        <li><a href="{{ url_for('admin.all_predictions') }}" class="nav-link active">Predictions</a></li>
+      </ul>
+    </div>
+    <div class="col-md-10 p-4">
+      <div class="page-intro">
+        <h1 class="page-title">All prediction records</h1>
+        <p class="page-subtitle">Each row reflects the persisted model version, calibrated probability, and confidence label captured at scoring time.</p>
+      </div>
+      <div class="hc-card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table hc-table mb-0">
+              <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Patient</th>
+                  <th>Probability</th>
+                  <th>Risk band</th>
+                  <th>Confidence</th>
+                  <th>Model version</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in predictions %}
+                <tr>
+                  <td><code>RPT-{{ '%05d'|format(p.id) }}</code></td>
+                  <td>
+                    <div class="fw-semibold">{{ p.patient_name }}</div>
+                    <div class="small-note">{{ p.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</div>
+                  </td>
+                  <td>{{ "%.1f"|format(p.risk_probability * 100) }}%</td>
+                  <td><span class="risk-pill {{ p.risk_level.split()[0]|lower }}">{{ p.risk_level }}</span></td>
+                  <td>{{ p.confidence_label or 'N/A' }}</td>
+                  <td class="small-note">{{ p.model_version or 'N/A' }}</td>
+                  <td>
+                    <a href="{{ url_for('report.view', pred_id=p.id) }}" class="btn btn-sm btn-outline-secondary me-1">View</a>
+                    <a href="{{ url_for('report.download', pred_id=p.id) }}" class="btn btn-sm btn-primary">PDF</a>
+                  </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center py-4 small-note">No prediction records yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

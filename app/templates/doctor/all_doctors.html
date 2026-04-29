@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Our Doctors – HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="text-center mb-5">
+    <h1 class="section-heading gradient-text">Our Medical Team</h1>
+    <p class="section-sub">Browse available doctors and specialists for follow-up support.</p>
+  </div>
+  <div class="row g-4">
+    {% for doc in doctors %}
+    <div class="col-md-6 col-lg-4 fade-up">
+      <div class="doctor-card h-100">
+        <div class="p-4 text-center">
+          <div class="doctor-avatar">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <h5 class="fw-bold mb-1">{{ doc.name }}</h5>
+          <p class="text-primary small mb-2">{{ doc.specialization }}</p>
+          <div class="availability-badge {% if doc.available %}available{% else %}unavailable{% endif %} mx-auto mb-3">
+            <i class="bi bi-circle-fill" style="font-size:.45rem;"></i>
+            {% if doc.available %}Available{% else %}Unavailable{% endif %}
+          </div>
+          <p class="text-muted small mb-3">{{ doc.bio[:100] }}{% if doc.bio|length > 100 %}...{% endif %}</p>
+          <div class="row g-2 text-center mb-3">
+            <div class="col-4">
+              <div class="eda-stat">
+                <div class="fw-bold text-primary">{{ doc.experience }}y</div>
+                <div class="small text-muted">Experience</div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="eda-stat">
+                <div class="fw-bold text-primary">{{ doc.patients|length }}</div>
+                <div class="small text-muted">Patients</div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="eda-stat">
+                <div class="fw-bold text-primary"><i class="bi bi-hospital"></i></div>
+                <div class="small text-muted">{{ doc.hospital[:10] }}...</div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="mailto:{{ doc.email }}" class="btn btn-sm btn-outline-light flex-grow-1">
+              <i class="bi bi-envelope me-1"></i>Email doctor
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5">
+      <i class="bi bi-person-badge fs-1 text-muted d-block mb-3"></i>
+      <p class="text-muted">No doctors are listed yet.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

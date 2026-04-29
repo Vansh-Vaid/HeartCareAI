@@ -1,0 +1,284 @@
+{
+  "model_version": "20260427060157",
+  "feature_order": [
+    "age",
+    "sex",
+    "cp",
+    "trestbps",
+    "chol",
+    "fbs",
+    "restecg",
+    "thalachh",
+    "exang",
+    "oldpeak",
+    "slope",
+    "ca",
+    "thal"
+  ],
+  "feature_schema": [
+    {
+      "name": "age",
+      "label": "Age",
+      "kind": "numeric",
+      "unit": "years",
+      "description": "Patient age in completed years.",
+      "min_value": 20,
+      "max_value": 90,
+      "step": 1,
+      "normal_range": "20-65 years",
+      "choices": []
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "kind": "binary",
+      "unit": "0 = female, 1 = male",
+      "description": "Biological sex encoded for the source dataset.",
+      "min_value": 0,
+      "max_value": 1,
+      "step": 1,
+      "normal_range": "Dataset coded value",
+      "choices": [
+        [
+          0,
+          "Female"
+        ],
+        [
+          1,
+          "Male"
+        ]
+      ]
+    },
+    {
+      "name": "cp",
+      "label": "Chest Pain Type",
+      "kind": "categorical",
+      "unit": "clinical code",
+      "description": "Chest pain type reported during evaluation.",
+      "min_value": 0,
+      "max_value": 3,
+      "step": 1,
+      "normal_range": "0-3",
+      "choices": [
+        [
+          0,
+          "Typical angina"
+        ],
+        [
+          1,
+          "Atypical angina"
+        ],
+        [
+          2,
+          "Non-anginal pain"
+        ],
+        [
+          3,
+          "Asymptomatic"
+        ]
+      ]
+    },
+    {
+      "name": "trestbps",
+      "label": "Resting Blood Pressure",
+      "kind": "numeric",
+      "unit": "mm Hg",
+      "description": "Resting blood pressure measured on admission.",
+      "min_value": 80,
+      "max_value": 220,
+      "step": 1,
+      "normal_range": "<120 normal, 120-139 elevated, >=140 high",
+      "choices": []
+    },
+    {
+      "name": "chol",
+      "label": "Serum Cholesterol",
+      "kind": "numeric",
+      "unit": "mg/dL",
+      "description": "Serum cholesterol concentration.",
+      "min_value": 100,
+      "max_value": 600,
+      "step": 1,
+      "normal_range": "<200 desirable, 200-239 borderline, >=240 high",
+      "choices": []
+    },
+    {
+      "name": "fbs",
+      "label": "Fasting Blood Sugar > 120 mg/dL",
+      "kind": "binary",
+      "unit": "0 = no, 1 = yes",
+      "description": "Whether fasting blood sugar is above 120 mg/dL.",
+      "min_value": 0,
+      "max_value": 1,
+      "step": 1,
+      "normal_range": "0 or 1",
+      "choices": [
+        [
+          0,
+          "No"
+        ],
+        [
+          1,
+          "Yes"
+        ]
+      ]
+    },
+    {
+      "name": "restecg",
+      "label": "Resting ECG",
+      "kind": "categorical",
+      "unit": "clinical code",
+      "description": "Resting electrocardiogram result.",
+      "min_value": 0,
+      "max_value": 2,
+      "step": 1,
+      "normal_range": "0-2",
+      "choices": [
+        [
+          0,
+          "Normal"
+        ],
+        [
+          1,
+          "ST-T wave abnormality"
+        ],
+        [
+          2,
+          "Left ventricular hypertrophy"
+        ]
+      ]
+    },
+    {
+      "name": "thalachh",
+      "label": "Maximum Heart Rate Achieved",
+      "kind": "numeric",
+      "unit": "bpm",
+      "description": "Highest heart rate observed during stress testing.",
+      "min_value": 50,
+      "max_value": 220,
+      "step": 1,
+      "normal_range": "60-100 bpm resting; higher stress tolerance is typically favorable",
+      "choices": []
+    },
+    {
+      "name": "exang",
+      "label": "Exercise-Induced Angina",
+      "kind": "binary",
+      "unit": "0 = no, 1 = yes",
+      "description": "Whether exercise triggered angina symptoms.",
+      "min_value": 0,
+      "max_value": 1,
+      "step": 1,
+      "normal_range": "0 or 1",
+      "choices": [
+        [
+          0,
+          "No"
+        ],
+        [
+          1,
+          "Yes"
+        ]
+      ]
+    },
+    {
+      "name": "oldpeak",
+      "label": "ST Depression",
+      "kind": "numeric",
+      "unit": "mm",
+      "description": "ST depression induced by exercise relative to rest.",
+      "min_value": 0.0,
+      "max_value": 7.0,
+      "step": 0.1,
+      "normal_range": "0-1 generally reassuring, >1 warrants attention",
+      "choices": []
+    },
+    {
+      "name": "slope",
+      "label": "ST Slope",
+      "kind": "categorical",
+      "unit": "clinical code",
+      "description": "Slope of the peak exercise ST segment.",
+      "min_value": 0,
+      "max_value": 2,
+      "step": 1,
+      "normal_range": "0-2",
+      "choices": [
+        [
+          0,
+          "Upsloping"
+        ],
+        [
+          1,
+          "Flat"
+        ],
+        [
+          2,
+          "Downsloping"
+        ]
+      ]
+    },
+    {
+      "name": "ca",
+      "label": "Major Vessels Colored by Fluoroscopy",
+      "kind": "categorical",
+      "unit": "count",
+      "description": "Number of major vessels colored by fluoroscopy.",
+      "min_value": 0,
+      "max_value": 3,
+      "step": 1,
+      "normal_range": "0-3",
+      "choices": [
+        [
+          0,
+          "0"
+        ],
+        [
+          1,
+          "1"
+        ],
+        [
+          2,
+          "2"
+        ],
+        [
+          3,
+          "3"
+        ]
+      ]
+    },
+    {
+      "name": "thal",
+      "label": "Thalassemia",
+      "kind": "categorical",
+      "unit": "clinical code",
+      "description": "Thalassemia status encoded in the source dataset.",
+      "min_value": 1,
+      "max_value": 7,
+      "step": 1,
+      "normal_range": "1, 2, 3, 6, or 7",
+      "choices": [
+        [
+          1,
+          "Fixed defect"
+        ],
+        [
+          2,
+          "Reversible defect"
+        ],
+        [
+          3,
+          "Normal"
+        ],
+        [
+          6,
+          "Type 6"
+        ],
+        [
+          7,
+          "Type 7"
+        ]
+      ]
+    }
+  ]
+}

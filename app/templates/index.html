@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}HeartCare AI – Cardiac Risk Prediction Platform{% endblock %}
+{% block content %}
+
+<!-- ── Hero ─────────────────────────────────────────────────────── -->
+<div class="container section-py">
+  <section class="hero-shell mb-5">
+    <div class="row g-0">
+      <div class="col-lg-8">
+        <div class="hero-copy">
+          <span class="hero-kicker"><i class="bi bi-shield-heart"></i>&nbsp;Heart Screening Support</span>
+          <h1 class="page-title mt-3">
+            Understand heart risk<br>
+            <span style="color:var(--primary);">more clearly and calmly</span>
+          </h1>
+          <p class="page-subtitle mt-3">
+            HeartCare AI helps you turn clinical test values into a clear heart risk estimate.
+            It explains difficult terms in plain language, highlights what may have influenced the result,
+            and helps you decide what to discuss with a doctor next.
+          </p>
+          <div class="d-flex gap-2 flex-wrap mt-4">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('predict.predict_form') }}" class="btn btn-primary btn-lg">
+              <i class="bi bi-activity me-2"></i>Start Screening
+            </a>
+            {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+              <i class="bi bi-person-plus me-2"></i>Get Started
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg">Login</a>
+            {% endif %}
+            <a href="{{ url_for('main.models') }}" class="btn btn-outline-secondary btn-lg">
+              <i class="bi bi-bar-chart me-1"></i>Learn How It Works
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="hero-aside">
+          <p class="small-note mb-3" style="color:var(--ink-2);">SCREENING SNAPSHOT</p>
+          <div class="metric-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="metric-card">
+              <div class="metric-label">Current Model</div>
+              <div class="metric-value" style="font-size:1rem;color:var(--primary);">
+                {{ best_model or summary.get('selected_model', {}).get('name', '—') }}
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Alert Level</div>
+              <div class="metric-value" style="color:var(--warning);">
+                {% if summary.get('selected_model') %}
+                  {{ "%.0f"|format(summary.selected_model.threshold * 100) }}%
+                {% else %}—{% endif %}
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Cases Reviewed</div>
+              <div class="metric-value" style="font-size:1.1rem;">
+                {{ summary.get('eda', {}).get('final_shape_before_split', [eda_shape[0]])[0] | int | string + "" }}
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Designed To</div>
+              <div class="metric-value" style="color:var(--secondary);font-size:1rem;">Avoid missed cases</div>
+            </div>
+          </div>
+          <div class="alert-note mt-3" style="font-size:.82rem;">
+            Helpful for screening and follow-up discussion. It does not replace a doctor.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How it helps ───────────────────────────────────────────── -->
+  <section class="mb-5">
+    <div class="page-intro">
+      <span class="eyebrow"><i class="bi bi-diagram-3"></i>&nbsp;What You Get</span>
+      <h2 class="section-heading mt-3">Simple guidance from one screening flow</h2>
+      <p class="page-subtitle">The app is designed to help patients and clinicians move from raw test values to a usable summary, not just a number on a screen.</p>
+    </div>
+    <div class="row g-3">
+      {% set models_info = [
+        ('bi-clipboard2-pulse', 'Guided data entry', 'Clear sections, reference ranges, and helper text make the screening form easier to complete.', 'Step 1', 'var(--info)'),
+        ('bi-bar-chart-line',   'Risk estimate',     'The result page shows a percentage, risk level, and confidence wording that is easier to understand.', 'Step 2', 'var(--primary)'),
+        ('bi-chat-dots',        'Friendly explanations', 'The built-in guide explains difficult terms such as ST depression, chest pain type, and thresholds in simple words.', 'Step 3', 'var(--warning)'),
+        ('bi-file-earmark-text','Shareable report',  'Each screening can be saved and exported as a report to review with a clinician later.', 'Step 4', 'var(--secondary)')
+      ] %}
+      {% for icon, name, desc, wt, color in models_info %}
+      <div class="col-md-6 col-xl-3">
+        <div class="hc-card h-100">
+          <div class="card-body">
+            <div class="stat-icon mb-3" style="background:rgba(255,255,255,.05);color:{{ color }};">
+              <i class="bi {{ icon }}"></i>
+            </div>
+            <h5 style="font-family:'Inter',sans-serif;font-weight:700;font-size:1rem;color:var(--ink);">{{ name }}</h5>
+            <p class="small-note mt-1 mb-3">{{ desc }}</p>
+            <span class="badge-chip">{{ wt }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ── Trust section ──────────────────────────────────────────── -->
+  <section class="mb-5">
+    <div class="page-intro">
+      <span class="eyebrow"><i class="bi bi-gear-wide-connected"></i>&nbsp;Why You Can Trust The Flow</span>
+      <h2 class="section-heading mt-3">Built to explain clearly and stay careful</h2>
+    </div>
+    <div class="row g-3">
+      {% set pillars = [
+        ('bi-bullseye', 'Careful alert threshold', 'The tool is set up to be cautious, so it is less likely to miss people who may need follow-up.'),
+        ('bi-graph-up-arrow', 'Meaningful percentages', 'The displayed percentage is tuned to be more understandable and useful than a raw model score.'),
+        ('bi-layout-split', 'Tested before use', 'The current screening model was evaluated on separate data before being used in the app.'),
+        ('bi-shield-check', 'Input checks built in', 'Each field is checked before the result is generated, which helps catch incomplete or invalid entries early.'),
+      ] %}
+      {% for icon, title, body in pillars %}
+      <div class="col-md-6">
+        <div class="d-flex gap-3 p-4 hc-card h-100">
+          <div class="stat-icon flex-shrink-0" style="background:var(--primary-dim);color:var(--primary);">
+            <i class="bi {{ icon }}"></i>
+          </div>
+          <div>
+            <h6 style="font-family:'Inter',sans-serif;font-weight:700;color:var(--ink);">{{ title }}</h6>
+            <p class="small-note mb-0">{{ body }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ── Model metrics table (if available) ────────────────────── -->
+  {% if model_results %}
+  <section>
+    <div class="page-intro">
+      <span class="eyebrow"><i class="bi bi-table"></i>&nbsp;Screening Quality</span>
+      <h2 class="section-heading mt-3">Current model snapshot</h2>
+      <p class="page-subtitle">These numbers help describe how the current screening model performed during evaluation.</p>
+    </div>
+    <div class="hc-card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table hc-table mb-0">
+            <thead>
+              <tr>
+                <th>Model</th><th>Accuracy</th><th>Missed Fewer Cases</th><th>Specificity</th><th>ROC-AUC</th><th>Calibration Error</th><th>Alert Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for name, res in model_results.items() %}
+              <tr>
+                <td class="fw-semibold">{{ name }}</td>
+                <td>{{ res.accuracy }}%</td>
+                <td style="color:var(--secondary);font-weight:600;">{{ res.recall }}%</td>
+                <td>{{ res.specificity }}%</td>
+                <td>{{ res.auc }}%</td>
+                <td>{{ res.brier }}</td>
+                <td><span class="badge-chip">{{ res.threshold }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

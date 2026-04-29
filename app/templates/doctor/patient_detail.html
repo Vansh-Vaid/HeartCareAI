@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Patient Detail - Doctor Panel{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="page-intro">
+    <a href="{{ url_for('doctor.profile') }}" class="small-note"><i class="bi bi-arrow-left"></i> Back to doctor panel</a>
+    <h1 class="page-title mt-3">{{ patient.name }}</h1>
+    <p class="page-subtitle">Review this patient’s saved screenings, latest risk levels, and report links in one place.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="hc-card text-center">
+        <div class="card-body">
+          <div class="doctor-avatar mx-auto mb-3"><i class="bi bi-person"></i></div>
+          <h4 class="mb-1">{{ patient.name }}</h4>
+          <p class="small-note">Patient ID {{ patient.patient_id }}</p>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="metric-label">Age</div><div>{{ patient.age }} years</div></div>
+            <div class="metric-card"><div class="metric-label">Sex</div><div>{% if patient.sex == 1 %}Male{% else %}Female{% endif %}</div></div>
+            <div class="metric-card"><div class="metric-label">Screenings</div><div>{{ predictions|length }}</div></div>
+            <div class="metric-card"><div class="metric-label">Registered</div><div>{{ patient.created_at.strftime('%Y-%m-%d') }}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="hc-card">
+        <div class="card-header">Screening history</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table hc-table mb-0">
+              <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Date</th>
+                  <th>Risk estimate</th>
+                  <th>Risk level</th>
+                  <th>Confidence</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in predictions %}
+                <tr>
+                  <td><code>RPT-{{ '%05d'|format(p.id) }}</code></td>
+                  <td>{{ p.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</td>
+                  <td>{{ "%.1f"|format(p.risk_probability * 100) }}%</td>
+                  <td><span class="risk-pill {{ p.risk_level.split()[0]|lower }}">{{ p.risk_level }}</span></td>
+                  <td>{{ p.confidence_label or 'N/A' }}</td>
+                  <td>
+                    <a href="{{ url_for('report.view', pred_id=p.id) }}" class="btn btn-sm btn-outline-secondary me-1">View</a>
+                    <a href="{{ url_for('report.download', pred_id=p.id) }}" class="btn btn-sm btn-primary">PDF</a>
+                  </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center py-4 small-note">No saved screenings for this patient yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

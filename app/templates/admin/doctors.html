@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Manage Doctors – Admin{% endblock %}
+{% block content %}
+<div class="container-fluid" style="padding-top:80px;">
+  <div class="row">
+    <div class="col-md-2 admin-sidebar d-none d-md-block">
+      <h6 class="text-muted small text-uppercase mb-3 ps-2">Admin Panel</h6>
+      <ul class="nav flex-column gap-1">
+        <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+        <li><a href="{{ url_for('admin.doctors') }}" class="nav-link active"><i class="bi bi-person-badge"></i>Doctors</a></li>
+        <li><a href="{{ url_for('admin.patients') }}" class="nav-link"><i class="bi bi-people"></i>Patients</a></li>
+        <li><a href="{{ url_for('admin.users') }}" class="nav-link"><i class="bi bi-person-lock"></i>Users</a></li>
+        <li><a href="{{ url_for('admin.all_predictions') }}" class="nav-link"><i class="bi bi-clipboard2-pulse"></i>Predictions</a></li>
+        <li><a href="{{ url_for('admin.create_doctor') }}" class="nav-link"><i class="bi bi-person-plus"></i>New Doctor</a></li>
+      </ul>
+    </div>
+    <div class="col-md-10 p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Doctor Accounts</h2>
+          <p class="text-muted mb-0">{{ doctors|length }} registered doctors</p>
+        </div>
+        <a href="{{ url_for('admin.create_doctor') }}" class="btn btn-primary">
+          <i class="bi bi-person-plus me-2"></i>Create Doctor
+        </a>
+      </div>
+      <div class="hc-card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table hc-table mb-0">
+              <thead>
+                <tr><th>ID</th><th>Name</th><th>Specialization</th><th>Hospital</th><th>Exp.</th><th>Patients</th><th>Available</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                {% for doc in doctors %}
+                <tr>
+                  <td><code class="text-primary">{{ doc.doctor_id }}</code></td>
+                  <td class="fw-semibold">{{ doc.name }}</td>
+                  <td class="text-muted small">{{ doc.specialization }}</td>
+                  <td class="text-muted small">{{ doc.hospital }}</td>
+                  <td>{{ doc.experience }}y</td>
+                  <td>{{ doc.patients|length }}</td>
+                  <td>
+                    {% if doc.available %}
+                    <span class="availability-badge available"><i class="bi bi-circle-fill" style="font-size:.5rem;"></i>Active</span>
+                    {% else %}
+                    <span class="availability-badge unavailable"><i class="bi bi-circle-fill" style="font-size:.5rem;"></i>Inactive</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{{ url_for('admin.edit_doctor', doc_id=doc.id) }}" class="btn btn-sm btn-outline-light">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" class="text-center text-muted py-4">No doctors found.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

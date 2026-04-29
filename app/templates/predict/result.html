@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% block title %}Screening Result - HeartCare AI{% endblock %}
+{% block content %}
+<div class="container section-py">
+  <div class="page-intro">
+    <span class="eyebrow"><i class="bi bi-activity"></i>Screening result</span>
+    <h1 class="page-title">Result for {{ patient_name }}</h1>
+    <p class="page-subtitle">This page shows the risk estimate, what may have influenced it, and what to review next.</p>
+  </div>
+
+  <section class="result-hero mb-4">
+    <div>
+      <div class="risk-stack">
+        <span class="risk-pill {{ prediction.risk_key }}">{{ prediction.risk_level }}</span>
+        <span class="badge-chip">{{ prediction.confidence_level }}</span>
+        <span class="badge-chip">Model: {{ prediction.selected_model_name }}</span>
+      </div>
+      <h2 class="section-heading mb-2">{{ "%.1f"|format(prediction.probability * 100) }}% risk estimate</h2>
+      <p class="result-callout mb-3">
+        This is a screening estimate based on the values you entered. It helps decide whether follow-up should be prioritized.
+        It does <strong>not</strong> diagnose heart disease.
+      </p>
+      <div class="soft-panel">
+        <div class="metric-label">How to read this</div>
+        <ul class="mb-0 ps-3 small-note">
+          <li><strong>Risk estimate</strong> is the model’s screening percentage for this case.</li>
+          <li><strong>Alert level</strong> is the cut point used to label a higher‑risk vs lower‑risk screen.</li>
+          <li><strong>Confidence</strong> is higher when the estimate is far from the alert level.</li>
+        </ul>
+      </div>
+      <div class="probability-meter mt-4">
+        <div class="probability-fill" data-probability-width="{{ (prediction.probability * 100)|round(1) }}"></div>
+        <span class="threshold-marker" style="left: {{ (prediction.threshold * 100)|round(1) }}%;"></span>
+      </div>
+      <div class="d-flex justify-content-between mt-2 small-note">
+        <span>Lower</span>
+        <span>Alert level {{ "%.1f"|format(prediction.threshold * 100) }}%</span>
+        <span>Higher</span>
+      </div>
+      <div class="d-flex gap-2 flex-wrap mt-4">
+        <a href="{{ url_for('report.download', pred_id=prediction_id) }}" class="btn btn-primary">Download PDF</a>
+        <a href="{{ url_for('report.view', pred_id=prediction_id) }}" class="btn btn-outline-secondary">Open full report</a>
+        <a href="{{ url_for('predict.predict_form') }}" class="btn btn-outline-secondary">Start another screening</a>
+      </div>
+    </div>
+
+    <div class="soft-panel">
+      <div class="metric-grid">
+        <div class="sidebar-metric">
+          <div class="metric-label">Screening outcome</div>
+          <div class="metric-value" style="font-size:1.15rem;">{{ 'Higher-risk screen' if prediction.prediction == 1 else 'Lower-risk screen' }}</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="metric-label">Model version</div>
+          <div class="fw-semibold">{{ prediction.model_version }}</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="metric-label">Patient</div>
+          <div class="fw-semibold">{{ patient_age }} years, {% if patient_sex == 1 %}male{% else %}female{% endif %}</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="metric-label">Generated</div>
+          <div class="fw-semibold">{{ timestamp }}</div>
+        </div>
+      </div>
+      <div class="hc-card mt-3" style="background:transparent;border:0;">
+        <div class="card-body p-0">
+          <div class="metric-label mb-2">Recommended next steps</div>
+          {% if prediction.prediction == 1 %}
+          <div class="next-steps">
+            <div class="next-step-item">
+              <div class="fw-semibold">Schedule medical review soon</div>
+              <div class="small-note">Share this report and discuss symptoms, history, and whether more tests are needed.</div>
+            </div>
+            <div class="next-step-item">
+              <div class="fw-semibold">Double-check key inputs</div>
+              <div class="small-note">If any values were entered incorrectly, re-run the screening with corrected numbers.</div>
+            </div>
+            <div class="next-step-item">
+              <div class="fw-semibold">Seek urgent care for severe symptoms</div>
+              <div class="small-note">Chest pain, severe shortness of breath, fainting, or worsening symptoms should be treated as urgent.</div>
+            </div>
+          </div>
+          {% else %}
+          <div class="next-steps">
+            <div class="next-step-item">
+              <div class="fw-semibold">Use this as reassurance, not a guarantee</div>
+              <div class="small-note">A lower-risk screen is encouraging, but it does not fully rule out disease.</div>
+            </div>
+            <div class="next-step-item">
+              <div class="fw-semibold">Follow up if symptoms exist</div>
+              <div class="small-note">If symptoms are present or persistent, discuss them with a clinician even with a lower-risk result.</div>
+            </div>
+            <div class="next-step-item">
+              <div class="fw-semibold">Save or share the report</div>
+              <div class="small-note">Download the PDF and keep it for your next appointment or personal tracking.</div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="hc-card mb-4">
+        <div class="card-header">What this means</div>
+        <div class="card-body">
+          {% if prediction.prediction == 1 %}
+          <p class="mb-2">This screening suggests the case may need closer medical review.</p>
+          <p class="small-note mb-0">A higher-risk result does not confirm heart disease, but it means the pattern deserves timely follow-up with a clinician.</p>
+          {% else %}
+          <p class="mb-2">This screening did not cross the app’s alert level.</p>
+          <p class="small-note mb-0">A lower-risk result is reassuring, but symptoms and clinical history still matter. Seek medical care if there are concerns.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="hc-card mb-4">
+        <div class="card-header">Possible reasons for this result</div>
+        <div class="card-body driver-list">
+          {% for item in prediction.explanation.drivers %}
+          <div class="driver-item">{{ item }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="hc-card mb-4">
+        <div class="card-header">Other helpful context</div>
+        <div class="card-body support-list">
+          {% for item in prediction.explanation.supporting_factors %}
+          <div class="support-item">{{ item }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if prediction.input_audit %}
+      <div class="hc-card">
+        <div class="card-header">Input checks</div>
+        <div class="card-body">
+          <ul class="mb-0">
+            {% for item in prediction.input_audit %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-5">
+      <div class="hc-card mb-4">
+        <div class="card-header">Values used in this screening</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table hc-table mb-0">
+              <thead>
+                <tr><th>Field</th><th>Value</th><th>Reference</th></tr>
+              </thead>
+              <tbody>
+                {% for feature, value in prediction.input.items() %}
+                <tr>
+                  <td>{{ feature_labels.get(feature, (feature,))[0] }}</td>
+                  <td class="fw-semibold">{{ value }}</td>
+                  <td class="small-note">{{ feature_labels.get(feature, ('', '', '', ''))[1] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {% if assigned_doctor %}
+      <div class="hc-card">
+        <div class="card-header">Assigned doctor</div>
+        <div class="card-body text-center">
+          <div class="doctor-avatar mx-auto mb-3"><i class="bi bi-person"></i></div>
+          <h5 class="mb-1">{{ assigned_doctor.name }}</h5>
+          <p class="small-note mb-2">{{ assigned_doctor.specialization }}</p>
+          <div>{{ assigned_doctor.hospital }}</div>
+          <div class="small-note mt-2">{{ assigned_doctor.phone }}{% if assigned_doctor.email %} · {{ assigned_doctor.email }}{% endif %}</div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if prediction.model_breakdown %}
+  <section class="hc-card mt-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div><i class="bi bi-bar-chart-steps me-2"></i>Technical details (optional)</div>
+      <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modelBreakdown" aria-expanded="false">
+        Show
+      </button>
+    </div>
+    <div id="modelBreakdown" class="collapse">
+      <div class="card-body p-0">
+        <p class="small-note px-3 pt-3 mb-2">
+          Different models review the same case separately. Differences between them can signal a borderline result.
+        </p>
+        <div class="table-responsive">
+          <table class="table hc-table mb-0">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Probability</th>
+                <th>Verdict</th>
+                <th>Confidence</th>
+                <th>Threshold</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for model_name, breakdown in prediction.model_breakdown.items() %}
+              <tr>
+                <td class="fw-semibold">{{ model_name }}</td>
+                <td>
+                  <div class="mini-bar-wrap">
+                    <div class="mini-bar" style="width: {{ breakdown.probability }}%; background: {% if breakdown.prediction == 1 %}var(--danger){% else %}var(--secondary){% endif %};"></div>
+                  </div>
+                  <span class="ms-2">{{ breakdown.probability }}%</span>
+                </td>
+                <td>
+                  <span class="risk-badge-sm {% if breakdown.prediction == 1 %}risk-badge-high{% else %}risk-badge-low{% endif %}">
+                    {{ breakdown.risk }}
+                  </span>
+                </td>
+                <td class="small-note">{{ breakdown.confidence_level }}</td>
+                <td class="small-note">{{ "%.1f"|format(breakdown.threshold * 100) }}%</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,6 @@
+doctor_id,name,specialization,email,phone,experience,hospital,bio,available
+D001,Dr. Arjun Sharma,Cardiologist,arjun.sharma@heartcare.com,+91-9876543210,18,Apollo Hearts,Pioneer in interventional cardiology.,True
+D002,Dr. Priya Nair,Cardiologist,priya.nair@heartcare.com,+91-9876543211,12,Fortis Cardiac,Expert in preventive cardiology.,True
+D003,Dr. Rahul Verma,Cardiac Surgeon,rahul.verma@heartcare.com,+91-9876543212,20,AIIMS Delhi,"Renowned cardiac surgeon, 2000+ surgeries.",True
+D004,Dr. Sneha Patel,General Physician,sneha.patel@heartcare.com,+91-9876543213,8,Medanta,Holistic preventive medicine specialist.,True
+D005,Dr. Kiran Reddy,Electrophysiologist,kiran.reddy@heartcare.com,+91-9876543214,15,Narayana Health,Cardiac arrhythmia specialist.,False
